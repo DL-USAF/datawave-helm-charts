@@ -443,6 +443,7 @@ web:
   #############################################################
   
   rbac:
+    enabled: false
     meta:
       name: default-cluster
   
