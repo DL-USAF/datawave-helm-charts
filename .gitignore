@@ -1,2 +1,6 @@
 ghcr-image-pull-secret.yaml
 **/*.tgz
+umbrella/values-local.yaml
+tests/logs/local
+**__pycache__
+il2_build_deploy.ps1
