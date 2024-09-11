@@ -1,6 +1,14 @@
 logging:
   level:
     datawave.microservice.authorization: DEBUG
+jsd:
+  users:
+    clearances-enabled: true
+    dissemination-controls-enabled: true
+    fine-access-controls-enabled: true
+    releasable-tos-enabled: true
+    class-roles-enabled: true
+    use-cac-format: false
 mock:
   users:
     global-roles-to-auths:
@@ -11,7 +19,7 @@ mock:
       fooRole: FOO
       privateRole: PRIVATE
       PublicRole: PUBLIC
-    per-user-roles-to-auths:
+    mockUsers:
       '[cn=test a. user, ou=example developers, o=example corp, c=us<cn=example corp ca, o=example corp, c=us>]':
         Administrator: DW_ADMIN
         AuthorizedUser: DW_USER
@@ -22,7 +30,11 @@ mock:
         AuthorizedServer: DW_SERV
         PublicRole: PUBLIC
         PrivateRole: PRIVATE
-    server-DN-regex: '.*notused.*'
+      '[demo user<null>]':
+        roles-to-auths:
+          AuthorizedUser: AUTH_USER
+          barRole: BAR
+    server-DN-regex: '.*server.*'
 server:
   ssl:
     client-auth: NEED
