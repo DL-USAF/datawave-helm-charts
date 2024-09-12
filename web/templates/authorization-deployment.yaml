@@ -86,7 +86,7 @@ spec:
           env:
             - name: CONFIG_SERVER_URL
               value: "http://{{ .Chart.Name }}-{{ .Values.web.configurationDeployment.meta.name }}:{{ .Values.web.configurationService.ports.default }}/configserver"
-          image: "{{ .Values.web.dockerRegistry.url }}/{{ .Values.web.authorizationDeployment.image.name }}:{{ .Values.web.authorizationDeployment.image.tag }}"
+          image: "{{ .Values.web.authorizationDeployment.image.registry }}/{{ .Values.web.authorizationDeployment.image.name }}:{{ .Values.web.authorizationDeployment.image.tag }}"
           imagePullPolicy: "{{ .Values.web.authorizationDeployment.image.pullPolicy }}"
           livenessProbe:
             httpGet:
@@ -143,6 +143,6 @@ spec:
             {{ if not .Values.web.certificates.externalSecret.enabled }}
             secretName: "{{ .Chart.Name }}-{{ .Values.web.certificatesSecret.meta.name }}"
             {{ else }}
-            secretName: {{ .Values.web.certificates.exernalSecret.name }}
+            secretName: {{ .Values.web.certificates.externalSecret.name }}
             {{ end }}
             optional: false
