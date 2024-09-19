@@ -111,6 +111,8 @@ spec:
             - name: "{{ .Chart.Name }}-{{ .Values.web.volumes.certificates.name }}"
               mountPath: "{{ .Values.web.volumes.certificates.destination }}"
               readOnly: true
+            - name: logs
+              mountPath: /logs
 
       #############################################################
       # Initialization Containers Associated with this Deployment #

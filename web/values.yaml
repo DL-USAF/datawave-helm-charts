@@ -30,7 +30,7 @@ web:
   
   accumulo:
     instanceName: dev
-    password: ThisP@ssw0rd1sBANANAS
+    password: "ThisP@ssw0rd1sBANANAS"
     user: root
   
   #######################################
