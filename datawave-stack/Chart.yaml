@@ -35,4 +35,4 @@ dependencies:
     version: 1.0.0
   - name: datawave-monolith-umbrella
     repository: oci://ghcr.io/nationalsecurityagency/datawave-helm-charts/charts
-    version: 1.0.0
+    version: 1.0.1

@@ -34,3 +34,15 @@ spring:
         refreshTokenTtl: 86400
         authCodeTtl: 86400
         idTokenTtl: 86400
+
+postgres:
+  config:
+    db-addr: "postgres-postgresql.datawave.svc.cluster.local:5432"
+    db-name: "authorization"
+    db-user: "postgres"
+    db-password: "password"
+    server-DN-regex: '.*server.*'
+    id-query-where-clauses:
+      first_name: "firstname"
+      last_name: "lastname"
+    dn-regex: "^cn=(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"

@@ -1,0 +1,26 @@
+datawave-monolith-umbrella:
+  dwv-authorization:
+    global:
+      dockerRegistry:
+        url: dwvregistry.azurecr.us
+    args:
+      - "--spring.output.ansi.enabled=ALWAYS"
+      - "--spring.profiles.active=default,postgres,k8s"
+    image:
+      name: datawave/jsd-dwv-auth
+      tag: 0.0.4
+      pullPolicy: Always
+  dwv-configuration:
+    additionalConfigs:
+      authorization:
+        postgres:
+          config:
+            db-addr: "postgres-postgresql.datawave.svc.cluster.local:5432"
+            db-name: "authorizations"
+            db-user: "postgres"
+            db-password: "password"
+            server-DN-regex: '.*server.*'
+            id-query-where-clauses:
+              first_name: "firstname"
+              last_name: "lastname"
+            dn-regex: "^(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"
