@@ -114,6 +114,8 @@ spec:
             - name: "{{ .Values.global.volumes.certificates.name }}"
               mountPath: "{{ .Values.global.volumes.certificates.destination }}"
               readOnly: true
+            - name: logs
+              mountPath: /logs
 
       #############################################################
       # Initialization Containers Associated with this Deployment #

@@ -37,7 +37,7 @@ spring:
 
 postgres:
   config:
-    db-addr: "postgres-postgresql.datawave.svc.cluster.local:5432"
+    db-addr: "postgres-postgresql.dev-datawave.svc.cluster.local:5432"
     db-name: "authorization"
     db-user: "postgres"
     db-password: "password"
@@ -45,4 +45,4 @@ postgres:
     id-query-where-clauses:
       first_name: "firstname"
       last_name: "lastname"
-    dn-regex: "^cn=(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"
+    dn-regex: "^(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"

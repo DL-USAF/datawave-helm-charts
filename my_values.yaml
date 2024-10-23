@@ -8,7 +8,7 @@ datawave-monolith-umbrella:
       - "--spring.profiles.active=default,postgres,k8s"
     image:
       name: datawave/jsd-dwv-auth
-      tag: 0.0.4
+      tag: 0.0.5
       pullPolicy: Always
   dwv-configuration:
     additionalConfigs:
