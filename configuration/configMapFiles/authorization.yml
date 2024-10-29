@@ -45,4 +45,9 @@ postgres:
     id-query-where-clauses:
       first_name: "firstname"
       last_name: "lastname"
-    dn-regex: "^(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"
+    dn-regex: "^(?<firstname>[a-zA-Z]*)\\.(?<lastname>[a-zA-Z]*).*$"{{- if .Values.authorization }}
+
+{{- with .Values.authorization.additions }}
+{{- toYaml . }}
+{{- end }}
+{{- end }}
