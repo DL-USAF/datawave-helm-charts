@@ -113,8 +113,9 @@ def test_datawave_ingest(log: Logger, refresh_cache):
     log.info(f"Number of Apps before starting ingest: {num_of_starting_statuses}")
 
     test_filename = f"test-{num_of_starting_statuses+1}.json"
-    
+
     # copy data file to hdfs node this also checks for file and copies into HDFS
+    log.debug(f"Copy file {test_filename} to ingest pod...")
     hdfs_nn_pod = get_specific_pod(hdfs_nn_info, namespace)
     cmd = [
         'kubectl',
@@ -130,7 +131,7 @@ def test_datawave_ingest(log: Logger, refresh_cache):
     proc = subprocess.run(cmd)
     log.info(proc)
 
-    if check_for_file(test_filename, namespace, log):
+    if not check_for_file(test_filename, namespace, log):
         log.warning("Test data file was not found inside hadoop pod. Cannot continue with ingest script.")
         raise RuntimeError("Test file was not found within the pod, cannot continue with ingest test.")
 
@@ -157,4 +158,4 @@ def test_datawave_ingest(log: Logger, refresh_cache):
         failed = repr(e)
 
     assert_test(not failed, log, fail_msg=failed)
-    
+

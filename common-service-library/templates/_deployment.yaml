@@ -42,7 +42,7 @@ spec:
   selector:
     matchLabels:
       application: "{{ .Values.meta.name }}"
-  
+
   #####################################
   # Deployment Template Configuration #
   #####################################
@@ -96,7 +96,7 @@ spec:
               port: {{ .Values.livenessProbe.port }}
               scheme: "{{ .Values.livenessProbe.scheme }}"
             initialDelaySeconds: {{ .Values.livenessProbe.delaySeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}            
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           readinessProbe:
             httpGet:
@@ -114,6 +114,8 @@ spec:
             - name: "{{ .Values.global.volumes.certificates.name }}"
               mountPath: "{{ .Values.global.volumes.certificates.destination }}"
               readOnly: true
+            - name: logs
+              mountPath: /logs
 
       #############################################################
       # Initialization Containers Associated with this Deployment #
@@ -126,6 +128,9 @@ spec:
       ###########################################
 
       volumes:
+        - name: logs
+          emptyDir:
+            sizeLimit: 5G
         - name: "{{ .Values.global.volumes.certificates.name }}"
           secret:
             secretName: {{ .Values.global.certSecretName}}

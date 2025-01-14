@@ -45,10 +45,16 @@ function ready_helm_charts() {
         echo ""
         exit 1
     fi
+    clean_up
     package_helm_dependencies "${DATAWAVE_STACK}"
-    helm package ${DATAWAVE_STACK}
+    helm package "${DATAWAVE_STACK}"
     HELM_CHART=datawave-system*.tgz
   fi
+}
+
+clean_up() {
+  rm -r "$BASEDIR/datawave-monolith/charts"
+  rm -r "$BASEDIR/datawave-stack/charts"
 }
 
 package_helm_dependencies() {
@@ -65,7 +71,7 @@ package_helm_dependencies() {
         if [ -n "$dep_path" ]; then
             echo "Packaging dependency: $dep"
             package_helm_dependencies "$base_dir/$dep_path"
-            
+
             # Package the dependency and copy it to the charts directory
             helm package "$base_dir/$dep_path"
             mkdir -p "$base_dir/charts"
@@ -91,8 +97,8 @@ function update_core_dns() {
 # Function to check if a Kubernetes cluster is running
 function check_k8s_cluster() {
   echo "Checking if Kubernetes is running..."
-  kubectl cluster-info &> /dev/null
-  if [ $? -ne 0 ]; then
+  kube_version_json=$(kubectl version --output=json)
+  if [ ! $(echo $kube_version_json | jq 'has("serverVersion")') ]; then
     echo "No Kubernetes cluster found. Deploying Minikube..."
     start_minikube
   else
@@ -131,14 +137,14 @@ function start_minikube() {
 
   echo "Do you want run Minikube purge first? (yes/no) [no]: "
   read user_input
-  
+
   if [ "$user_input" = "yes" ]; then
       echo "Purging the minikube cluster"
       minikube delete --all --purge
   else
       echo "Minikube cluster not purged."
   fi
-  minikube start --nodes 3 --cpus 4 --memory 15960 --disk-size 20480 
+  minikube start --nodes 3 --cpus 4 --memory 15960 --disk-size 20480
   if [ $? -eq 0 ]; then
     echo "Minikube started successfully."
   else
@@ -175,14 +181,14 @@ function preload_docker_image() {
     exit 1
   fi
 
-  minikube image load $image 
+  minikube image load $image
   if [ $? -eq 0 ]; then
     echo "$image loaded into minikube successfully."
   else
     echo "Failed to load $image into minikube. Exiting."
     exit 1
   fi
-  
+
 }
 
 function configure_repository_credentials(){
@@ -192,9 +198,9 @@ function configure_repository_credentials(){
 
     echo "Github Access Token: "
     read -s pat
-  
+
     "${BASEDIR}"/create-image-pull-secrets.sh $username $pat
- 
+
   fi
   kubectl -n $NAMESPACE apply -f "${BASEDIR}"/ghcr-image-pull-secret.yaml
 }
@@ -243,7 +249,7 @@ function ghcr_login() {
     # Split the username and password
     USERNAME=$(echo $AUTH | cut -d ':' -f 1)
     PASSWORD=$(echo $AUTH | cut -d ':' -f 2)
-    echo $PASSWORD | docker login ghcr.io --username $USERNAME --password-stdin 
+    echo $PASSWORD | docker login ghcr.io --username $USERNAME --password-stdin
     if [ $? -eq 0 ]; then
       echo "Docker login successful."
     else
@@ -275,7 +281,7 @@ function configure_etc_hosts(){
   echo "$(minikube ip) accumulo.datawave.org" | sudo tee -a /etc/hosts
   echo "$(minikube ip) web.datawave.org" | sudo tee -a /etc/hosts
   echo "$(minikube ip) dictionary.datawave.org" | sudo tee -a /etc/hosts
-  
+
   if ${USE_EXISTING_ZOOKEEPER}; then
     EXTRA_HELM_ARGS="${EXTRA_HELM_ARGS} --set charts.zookeeper.enabled=false"
     echo "$(minikube ip | cut -f1,2,3 -d .).1 zookeeper" | sudo tee -a /etc/hosts
@@ -309,6 +315,10 @@ function helm_install() {
   echo "Starting Helm Deployment"
 
   # shellcheck disable=SC2086
+  echo "Namespace: $NAMESPACE"
+  echo "Helm Chart: $HELM_CHART"
+  echo "Value file: ${values_file:-$DATAWAVE_STACK/values.yaml}"
+  echo "Extra helm args: ${EXTRA_HELM_ARGS}"
   helm -n $NAMESPACE upgrade --install dwv ${HELM_CHART} -f ${values_file:-$DATAWAVE_STACK/values.yaml} ${EXTRA_HELM_ARGS} --wait --timeout 15m0s
   if [ $? -eq 0 ]; then
     echo "Helm install successful."
